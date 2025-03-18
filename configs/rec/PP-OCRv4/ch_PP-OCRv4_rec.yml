@@ -8,7 +8,7 @@ Global:
   save_epoch_step: 50
   eval_batch_step: [0, 2000]
   cal_metric_during_train: true
-  pretrained_model: /kaggle/input/pretrain_ocr/other/default/1/en_PP-OCRv3_rec_train/en_PP-OCRv3_rec_train
+  pretrained_model: 
   checkpoints:
   save_inference_dir:
   use_visualdl: false
