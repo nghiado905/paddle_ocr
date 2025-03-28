@@ -1,25 +1,24 @@
 Global:
   debug: false
   use_gpu: true
-  epoch_num: 3000
+  epoch_num: 10000
   log_smooth_window: 20
   print_batch_step: 10
   save_model_dir: ./output/rec_ppocr_v4
   save_epoch_step: 100
-  eval_batch_step: [0, 2000]
+  eval_batch_step: [0, 100]
   cal_metric_during_train: true
   pretrained_model: 
   checkpoints:
   save_inference_dir:
-  use_visualdl: false
+  use_visualdl: true  # Bật theo dõi VisualDL
   infer_img: /kaggle/working/paddle_ocr/data_OCR/final_data/img_1.jpg
   character_dict_path: ppocr/utils/dict/vi_dict.txt
-  max_text_length: &max_text_length 80
+  max_text_length: &max_text_length 100
   infer_mode: false
   use_space_char: true
   distributed: true
   save_res_path: ./output/rec/v4_v1
-
 
 Optimizer:
   name: Adam
@@ -27,12 +26,11 @@ Optimizer:
   beta2: 0.999
   lr:
     name: Cosine
-    learning_rate: 0.00001
-    warmup_epoch: 10
+    learning_rate: 0.0003  # Giảm learning rate để mô hình học chậm hơn
+    warmup_epoch: 5  # Giảm warmup xuống 5 epoch
   regularizer:
     name: L2
-    factor: 1.0e-04
-
+    factor: 1.0e-04  # Tăng regularization để tránh overfitting
 
 Architecture:
   model_type: rec
@@ -41,6 +39,7 @@ Architecture:
   Backbone:
     name: PPLCNetV3
     scale: 0.95
+    dropout: 0.2  # Thêm dropout để giảm overfitting
   Head:
     name: MultiHead
     head_list:
@@ -75,11 +74,9 @@ Train:
   dataset:
     name: MultiScaleDataSet
     ds_width: false
-    # data_dir: /content/rec
     data_dir: ./train_data/ic15_data/
     ext_op_transform_idx: 1
     label_file_list:
-    # - /content/rec/rec_gt_train.txt
       - ./train_data/ic15_data/rec_gt_train.txt
     transforms:
     - DecodeImage:
@@ -91,6 +88,16 @@ Train:
         image_shape: [64, 320, 3]
         max_text_length: *max_text_length
     - RecAug:
+    - ColorJitter:  # Thêm ColorJitter để làm phong phú dữ liệu
+        brightness: 0.2
+        contrast: 0.2
+        saturation: 0.2
+        hue: 0.1
+    - RandomErasing:  # Thêm RandomErasing để tránh overfitting
+        probability: 0.5
+        sl: 0.02
+        sh: 0.4
+        r1: 0.3
     - MultiLabelEncode:
         gtc_encode: NRTRLabelEncode
     - KeepKeys:
@@ -103,7 +110,7 @@ Train:
   sampler:
     name: MultiScaleSampler
     scales: [[320, 32], [320, 48], [320, 64]]
-    first_bs: &bs 64
+    first_bs: &bs 32  # Giảm batch size từ 64 → 32
     fix_bs: false
     divided_factor: [8, 16] # w, h
     is_training: True
@@ -112,13 +119,12 @@ Train:
     batch_size_per_card: *bs
     drop_last: true
     num_workers: 8
+
 Eval:
   dataset:
     name: SimpleDataSet
-    # data_dir: /content/rec
     data_dir: ./train_data/ic15_data
     label_file_list:
-    # - /content/rec/rec_gt_test.txt
       - ./train_data/ic15_data/rec_gt_test.txt
     transforms:
     - DecodeImage:
@@ -138,6 +144,5 @@ Eval:
   loader:
     shuffle: false
     drop_last: false
-    batch_size_per_card: 64
+    batch_size_per_card: 32
     num_workers: 4
-
