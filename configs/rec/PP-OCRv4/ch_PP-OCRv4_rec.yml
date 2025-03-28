@@ -6,7 +6,7 @@ Global:
   print_batch_step: 10
   save_model_dir: ./output/rec_ppocr_v4
   save_epoch_step: 100
-  eval_batch_step: [0, 2000]
+  eval_batch_step: [0, 500]
   cal_metric_during_train: true
   pretrained_model: 
   checkpoints:
@@ -31,8 +31,7 @@ Optimizer:
     warmup_epoch: 10
   regularizer:
     name: L2
-    factor: 1.0e-04
-
+    factor: 5.0e-04
 
 Architecture:
   model_type: rec
@@ -102,8 +101,8 @@ Train:
         - valid_ratio
   sampler:
     name: MultiScaleSampler
-    scales: [[320, 32], [320, 48], [320, 64]]
-    first_bs: &bs 64
+    scales: [[320, 32], [320, 48], [320, 64], [320, 80]]
+    first_bs: &bs 32
     fix_bs: false
     divided_factor: [8, 16] # w, h
     is_training: True
