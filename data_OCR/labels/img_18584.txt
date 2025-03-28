@@ -1,0 +1,1 @@
+../input/data1111/final_data1/img_18584.jpg	(Tổ thành theo loài cây xác đinh cho 10 loài từ cao nhất trở xuống)

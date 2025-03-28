@@ -1,0 +1,1 @@
+../input/data1111/final_data1/img_40203.jpg	1,34,1,39 1,42 1,38

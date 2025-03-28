@@ -1,18 +1,18 @@
 Global:
   debug: false
   use_gpu: true
-  epoch_num: 250
+  epoch_num: 3000
   log_smooth_window: 20
   print_batch_step: 10
   save_model_dir: ./output/rec_ppocr_v4
-  save_epoch_step: 50
+  save_epoch_step: 100
   eval_batch_step: [0, 2000]
   cal_metric_during_train: true
   pretrained_model: 
   checkpoints:
   save_inference_dir:
   use_visualdl: false
-  infer_img: doc/imgs_words/ch/word_1.jpg
+  infer_img: /kaggle/working/paddle_ocr/data_OCR/final_data/img_1.jpg
   character_dict_path: ppocr/utils/dict/vi_dict.txt
   max_text_length: &max_text_length 80
   infer_mode: false
@@ -27,11 +27,11 @@ Optimizer:
   beta2: 0.999
   lr:
     name: Cosine
-    learning_rate: 0.001
+    learning_rate: 0.00001
     warmup_epoch: 10
   regularizer:
     name: L2
-    factor: 3.0e-05
+    factor: 1.0e-04
 
 
 Architecture:
@@ -139,5 +139,5 @@ Eval:
     shuffle: false
     drop_last: false
     batch_size_per_card: 64
-    num_workers: 0
+    num_workers: 4
 

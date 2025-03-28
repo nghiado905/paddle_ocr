@@ -1,0 +1,1 @@
+../input/data1111/final_data1/img_69323.jpg	- Cao độ tim đường tại các ngà giao nhau: Hmin ? 5,25m, Hmax ? 6,00m.

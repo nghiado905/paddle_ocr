@@ -1,0 +1,1 @@
+../input/data1111/final_data1/img_16200.jpg	% Thực hiện việc chụp Xquang phổi cho các đối tượng có chỉ định;

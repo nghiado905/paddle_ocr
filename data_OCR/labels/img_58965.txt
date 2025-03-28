@@ -1,0 +1,1 @@
+../input/data1111/final_data1/img_58965.jpg	tiếp vào hồ; phát hiện và khôi phục lại các vị trí mốc giới (nếu có) bị mất, lần chiếm

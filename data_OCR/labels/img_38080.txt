@@ -1,0 +1,1 @@
+../input/data1111/final_data1/img_38080.jpg	trường hợp số ý kiến tán thành và không tán thành ngang nhau thì quyết định
