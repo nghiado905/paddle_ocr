@@ -1,25 +1,24 @@
 Global:
   debug: false
   use_gpu: true
-  epoch_num: 500
+  epoch_num: 300
   log_smooth_window: 20
   print_batch_step: 10
-  save_model_dir: ./output/rec_ppocr_v3
-  save_epoch_step: 3
-  eval_batch_step: [0, 2000]
+  save_model_dir: ./output/rec_ppocr_v4
+  save_epoch_step: 100
+  eval_batch_step: [0, 500]
   cal_metric_during_train: true
-  pretrained_model:
+  pretrained_model: 
   checkpoints:
   save_inference_dir:
   use_visualdl: false
   infer_img: doc/imgs_words/ch/word_1.jpg
-  character_dict_path: ppocr/utils/ppocr_keys_v1.txt
-  max_text_length: &max_text_length 25
+  character_dict_path: ppocr/utils/dict/vi_dict.txt
+  max_text_length: &max_text_length 80
   infer_mode: false
   use_space_char: true
   distributed: true
-  save_res_path: ./output/rec/predicts_ppocrv3.txt
-  d2s_train_image_shape: [3,48,320]
+  save_res_path: ./output/rec/v4_v1
 
 Optimizer:
   name: Adam
@@ -27,52 +26,48 @@ Optimizer:
   beta2: 0.999
   lr:
     name: Cosine
-    learning_rate: 0.001
-    warmup_epoch: 5
+    learning_rate: 0.00001
+    warmup_epoch: 10
   regularizer:
     name: L2
-    factor: 3.0e-05
-
+    factor: 5.0e-04
 
 Architecture:
   model_type: rec
   algorithm: SVTR_LCNet
   Transform:
   Backbone:
-    name: MobileNetV1Enhance
-    scale: 0.5
-    last_conv_stride: [1, 2]
-    last_pool_type: avg
-    last_pool_kernel_size: [2, 2]
+    name: PPLCNetV3
+    scale: 0.95
   Head:
     name: MultiHead
     head_list:
       - CTCHead:
           Neck:
             name: svtr
-            dims: 64
+            dims: 120
             depth: 2
             hidden_dims: 120
+            kernel_size: [1, 3]
             use_guide: True
           Head:
             fc_decay: 0.00001
-      - SARHead:
-          enc_dim: 512
+      - NRTRHead:
+          nrtr_dim: 384
           max_text_length: *max_text_length
 
 Loss:
   name: MultiLoss
   loss_config_list:
     - CTCLoss:
-    - SARLoss:
+    - NRTRLoss:
 
 PostProcess:  
-  name: CTCLabelDecode
+  name: AttnLabelDecode 
 
 Metric:
   name: RecMetric
   main_indicator: acc
-  ignore_space: False
 
 Train:
   dataset:
@@ -92,25 +87,25 @@ Train:
         image_shape: [64, 320, 3]
         max_text_length: *max_text_length
     - RecAug:
-        - RandRotate:
-            max_angle: 10
-            prob: 0.5
-        - RandBlur:
-            prob: 0.4
-            blur_type: gaussian
-            kernel_size: [3, 5]
-        - ColorJitter:
-            prob: 0.6
-            brightness: 0.3
-            contrast: 0.3
-            saturation: 0.3
-        - RandNoise:
-            prob: 0.4
-            noise_type: salt_pepper
-            max_noise_ratio: 0.02
-        - RandResizeCrop:
-            prob: 0.5
-            scale_range: [0.8, 1.2]
+    - RandRotate:
+        max_angle: 10
+        prob: 0.5
+    - RandBlur:
+        prob: 0.4
+        blur_type: gaussian
+        kernel_size: [3, 5]
+    - ColorJitter:
+        prob: 0.6
+        brightness: 0.3
+        contrast: 0.3
+        saturation: 0.3
+    - RandNoise:
+        prob: 0.4
+        noise_type: salt_pepper
+        max_noise_ratio: 0.02
+    - RandResizeCrop:
+        prob: 0.5
+        scale_range: [0.8, 1.2]
     - RandPerspective:
         prob: 0.3
         distortion_scale: 0.2
@@ -135,28 +130,30 @@ Train:
     batch_size_per_card: *bs
     drop_last: true
     num_workers: 8
+
 Eval:
   dataset:
     name: SimpleDataSet
-    data_dir: ./train_data
+    data_dir: ./train_data/ic15_data
     label_file_list:
-    - ./train_data/val_list.txt
+      - ./train_data/ic15_data/rec_gt_test.txt
     transforms:
     - DecodeImage:
         img_mode: BGR
         channel_first: false
     - MultiLabelEncode:
+        gtc_encode: NRTRLabelEncode
     - RecResizeImg:
-        image_shape: [3, 48, 320]
+        image_shape: [3, 64, 320]
     - KeepKeys:
         keep_keys:
         - image
         - label_ctc
-        - label_sar
+        - label_gtc
         - length
         - valid_ratio
   loader:
     shuffle: false
     drop_last: false
-    batch_size_per_card: 128
+    batch_size_per_card: 64
     num_workers: 4
