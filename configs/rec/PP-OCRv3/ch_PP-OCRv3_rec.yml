@@ -76,36 +76,65 @@ Metric:
 
 Train:
   dataset:
-    name: SimpleDataSet
-    data_dir: ./train_data/
+    name: MultiScaleDataSet
+    ds_width: false
+    data_dir: ./train_data/ic15_data/
     ext_op_transform_idx: 1
     label_file_list:
-    - ./train_data/train_list.txt
+      - ./train_data/ic15_data/rec_gt_train.txt
     transforms:
     - DecodeImage:
         img_mode: BGR
         channel_first: false
     - RecConAug:
-        prob: 0.5
+        prob: 0.7
         ext_data_num: 2
-        image_shape: [48, 320, 3]
+        image_shape: [64, 320, 3]
         max_text_length: *max_text_length
     - RecAug:
+        - RandRotate:
+            max_angle: 10
+            prob: 0.5
+        - RandBlur:
+            prob: 0.4
+            blur_type: gaussian
+            kernel_size: [3, 5]
+        - ColorJitter:
+            prob: 0.6
+            brightness: 0.3
+            contrast: 0.3
+            saturation: 0.3
+        - RandNoise:
+            prob: 0.4
+            noise_type: salt_pepper
+            max_noise_ratio: 0.02
+        - RandResizeCrop:
+            prob: 0.5
+            scale_range: [0.8, 1.2]
+    - RandPerspective:
+        prob: 0.3
+        distortion_scale: 0.2
     - MultiLabelEncode:
-    - RecResizeImg:
-        image_shape: [3, 48, 320]
+        gtc_encode: NRTRLabelEncode
     - KeepKeys:
         keep_keys:
         - image
         - label_ctc
-        - label_sar
+        - label_gtc
         - length
         - valid_ratio
+  sampler:
+    name: MultiScaleSampler
+    scales: [[320, 32], [320, 48], [320, 64], [320, 80]]
+    first_bs: &bs 32
+    fix_bs: false
+    divided_factor: [8, 16]
+    is_training: True
   loader:
     shuffle: true
-    batch_size_per_card: 128
+    batch_size_per_card: *bs
     drop_last: true
-    num_workers: 4
+    num_workers: 8
 Eval:
   dataset:
     name: SimpleDataSet
