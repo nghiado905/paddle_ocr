@@ -87,9 +87,6 @@ Train:
         image_shape: [64, 320, 3]
         max_text_length: *max_text_length
     - RecAug:
-    - RandRotate:
-        max_angle: 10
-        prob: 0.5
     - RandBlur:
         prob: 0.4
         blur_type: gaussian
