@@ -1,7 +1,7 @@
 Global:
   debug: false
   use_gpu: true
-  epoch_num: 10000
+  epoch_num: 300
   log_smooth_window: 20
   print_batch_step: 10
   save_model_dir: ./output/rec_ppocr_v4
@@ -36,10 +36,16 @@ Architecture:
   model_type: rec
   algorithm: SVTR_LCNet
   Transform:
+  # Backbone:
+  #   name: PPLCNetV3
+  #   scale: 0.95
+  #   dropout: 0.2  # Thêm dropout để giảm overfitting
   Backbone:
-    name: PPLCNetV3
-    scale: 0.95
-    dropout: 0.2  # Thêm dropout để giảm overfitting
+    name: MobileNetV1Enhance
+    scale: 0.5
+    last_conv_stride: [1, 2]
+    last_pool_type: avg
+    last_pool_kernel_size: [2, 2]
   Head:
     name: MultiHead
     head_list:
