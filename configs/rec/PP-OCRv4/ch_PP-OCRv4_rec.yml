@@ -99,11 +99,6 @@ Train:
         contrast: 0.2
         saturation: 0.2
         hue: 0.1
-    - RandomErasing:  # Thêm RandomErasing để tránh overfitting
-        probability: 0.5
-        sl: 0.02
-        sh: 0.4
-        r1: 0.3
     - MultiLabelEncode:
         gtc_encode: NRTRLabelEncode
     - KeepKeys:
