@@ -38,8 +38,14 @@ Architecture:
   algorithm: SVTR_LCNet
   Transform:
   Backbone:
-    name: PPLCNetV3
-    scale: 0.95
+    name: MobileNetV3
+    scale: 0.5
+    model_name: small
+    small_stride:
+    - 1
+    - 2
+    - 2
+    - 2
   Head:
     name: MultiHead
     head_list:
