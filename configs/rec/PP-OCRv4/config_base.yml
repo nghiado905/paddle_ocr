@@ -5,9 +5,7 @@ Global:
   print_batch_step: 10
   save_model_dir: ./output/config_base
   save_epoch_step: 3
-  eval_batch_step:
-  - 0
-  - 2000
+  eval_batch_step: -1
   cal_metric_during_train: true
   pretrained_model: null
   checkpoints: null
