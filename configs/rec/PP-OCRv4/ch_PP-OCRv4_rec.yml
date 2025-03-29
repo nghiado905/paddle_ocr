@@ -1,11 +1,11 @@
 Global:
   debug: false
   use_gpu: true
-  epoch_num: 300
+  epoch_num: 100
   log_smooth_window: 20
   print_batch_step: 10
   save_model_dir: ./output/rec_ppocr_v4
-  save_epoch_step: 100
+  save_epoch_step: 10
   eval_batch_step: [0, 1000]
   cal_metric_during_train: true
   pretrained_model: 
@@ -110,7 +110,7 @@ Train:
     shuffle: true
     batch_size_per_card: *bs
     drop_last: true
-    num_workers: 8
+    num_workers: 4
 Eval:
   dataset:
     name: SimpleDataSet
