@@ -1,9 +1,9 @@
 Global:
-  debug: false
+  debug: true  # Bật debug để dễ dàng kiểm tra lỗi
   use_gpu: true
   epoch_num: 100
   log_smooth_window: 20
-  print_batch_step: 10
+  print_batch_step: 50
   save_model_dir: ./output/rec_ppocr_v4
   save_epoch_step: 10
   eval_batch_step: [0, 1000]
@@ -19,7 +19,6 @@ Global:
   use_space_char: true
   distributed: true
   save_res_path: ./output/rec/v4_v1
-
 
 Optimizer:
   name: Adam
@@ -80,11 +79,9 @@ Train:
   dataset:
     name: MultiScaleDataSet
     ds_width: false
-    # data_dir: /content/rec
     data_dir: ./train_data/ic15_data/
     ext_op_transform_idx: 1
     label_file_list:
-    # - /content/rec/rec_gt_train.txt
       - ./train_data/ic15_data/rec_gt_train.txt
     transforms:
     - DecodeImage:
@@ -92,8 +89,8 @@ Train:
         channel_first: false
     - RecConAug:
         prob: 0.5
-        ext_data_num: 2
-        image_shape: [3, 32, 320]
+        ext_data_num: 1  # Giảm ext_data_num từ 2 xuống 1 để giảm phức tạp khi ghép ảnh
+        image_shape: [3, 48, 320]  # Tăng chiều cao từ 32 lên 48 để tránh lỗi resize
         max_text_length: *max_text_length
     - RecAug:
     - MultiLabelEncode:
@@ -107,7 +104,7 @@ Train:
         - valid_ratio
   sampler:
     name: MultiScaleSampler
-    scales: [[320, 32]]
+    scales: [[320, 48]]  # Đồng bộ với image_shape mới
     first_bs: &bs 32
     fix_bs: false
     divided_factor: [8, 16] # w, h
@@ -117,13 +114,12 @@ Train:
     batch_size_per_card: *bs
     drop_last: true
     num_workers: 4
+
 Eval:
   dataset:
     name: SimpleDataSet
-    # data_dir: /content/rec
     data_dir: ./train_data/ic15_data
     label_file_list:
-    # - /content/rec/rec_gt_test.txt
       - ./train_data/ic15_data/rec_gt_test.txt
     transforms:
     - DecodeImage:
@@ -132,7 +128,7 @@ Eval:
     - MultiLabelEncode:
         gtc_encode: NRTRLabelEncode
     - RecResizeImg:
-        image_shape: [3, 32, 320]
+        image_shape: [3, 48, 320]  # Đồng bộ với image_shape trong Train
     - KeepKeys:
         keep_keys:
         - image
@@ -145,4 +141,3 @@ Eval:
     drop_last: false
     batch_size_per_card: 16
     num_workers: 4
-
