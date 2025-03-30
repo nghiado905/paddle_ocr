@@ -93,7 +93,7 @@ Train:
     - RecConAug:
         prob: 0.5
         ext_data_num: 2
-        image_shape: [64, 320, 3]
+        image_shape: [3, 32, 320]
         max_text_length: *max_text_length
     - RecAug:
     - MultiLabelEncode:
@@ -107,7 +107,7 @@ Train:
         - valid_ratio
   sampler:
     name: MultiScaleSampler
-    scales: [[320, 32], [320, 48], [320, 64], [320, 80]]
+    scales: [[320, 32]]
     first_bs: &bs 32
     fix_bs: false
     divided_factor: [8, 16] # w, h
@@ -132,7 +132,7 @@ Eval:
     - MultiLabelEncode:
         gtc_encode: NRTRLabelEncode
     - RecResizeImg:
-        image_shape: [3, 64, 320]
+        image_shape: [3, 32, 320]
     - KeepKeys:
         keep_keys:
         - image
@@ -143,6 +143,6 @@ Eval:
   loader:
     shuffle: false
     drop_last: false
-    batch_size_per_card: 64
+    batch_size_per_card: 16
     num_workers: 4
 
