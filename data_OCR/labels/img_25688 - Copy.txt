@@ -1,0 +1,1 @@
+../input/data1111/final_data1/img_25688.jpg	tra trừ 0.5 điểm (điểm trừ không quá 5 điểm).

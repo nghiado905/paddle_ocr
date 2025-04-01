@@ -1,0 +1,151 @@
+Architecture:
+  Backbone:
+    model_name: small
+    name: MobileNetV3
+    scale: 0.5
+    small_stride:
+    - 1
+    - 2
+    - 2
+    - 2
+  Head:
+    head_list:
+    - CTCHead:
+        Head:
+          fc_decay: 1.0e-05
+        Neck:
+          depth: 2
+          dims: 120
+          hidden_dims: 120
+          kernel_size:
+          - 1
+          - 3
+          name: svtr
+          use_guide: true
+    - NRTRHead:
+        max_text_length: 80
+        nrtr_dim: 384
+    name: MultiHead
+  Transform: null
+  algorithm: SVTR_LCNet
+  model_type: rec
+Eval:
+  dataset:
+    data_dir: ./train_data/ic15_data
+    label_file_list:
+    - ./train_data/ic15_data/rec_gt_test.txt
+    name: SimpleDataSet
+    transforms:
+    - DecodeImage:
+        channel_first: false
+        img_mode: BGR
+    - MultiLabelEncode:
+        gtc_encode: NRTRLabelEncode
+    - RecResizeImg:
+        image_shape:
+        - 3
+        - 32
+        - 320
+    - KeepKeys:
+        keep_keys:
+        - image
+        - label_ctc
+        - label_gtc
+        - length
+        - valid_ratio
+  loader:
+    batch_size_per_card: 16
+    drop_last: false
+    num_workers: 4
+    shuffle: false
+Global:
+  cal_metric_during_train: true
+  character_dict_path: ppocr/utils/dict/vi_dict.txt
+  checkpoints: null
+  debug: true
+  distributed: true
+  epoch_num: 100
+  eval_batch_step:
+  - 0
+  - 1000
+  infer_img: doc/imgs_words/ch/word_1.jpg
+  infer_mode: false
+  log_smooth_window: 20
+  max_text_length: 80
+  pretrained_model: null
+  print_batch_step: 50
+  save_epoch_step: 10
+  save_inference_dir: null
+  save_model_dir: ./output/rec_ppocr_v4
+  save_res_path: ./output/rec/v4_v1
+  use_gpu: true
+  use_space_char: true
+  use_visualdl: false
+Loss:
+  loss_config_list:
+  - CTCLoss: null
+  - NRTRLoss: null
+  name: MultiLoss
+Metric:
+  main_indicator: acc
+  name: RecMetric
+Optimizer:
+  beta1: 0.9
+  beta2: 0.999
+  lr:
+    learning_rate: 1.0e-05
+    name: Cosine
+    warmup_epoch: 5
+  name: Adam
+  regularizer:
+    factor: 0.0005
+    name: L2
+PostProcess:
+  name: AttnLabelDecode
+Train:
+  dataset:
+    data_dir: ./train_data/ic15_data/
+    ds_width: false
+    ext_op_transform_idx: 1
+    label_file_list:
+    - ./train_data/ic15_data/rec_gt_train.txt
+    name: MultiScaleDataSet
+    transforms:
+    - DecodeImage:
+        channel_first: false
+        img_mode: BGR
+    - RecConAug:
+        ext_data_num: 1
+        image_shape:
+        - 3
+        - 32
+        - 320
+        max_text_length: 80
+        prob: 0.5
+    - RecAug: null
+    - MultiLabelEncode:
+        gtc_encode: NRTRLabelEncode
+    - KeepKeys:
+        keep_keys:
+        - image
+        - label_ctc
+        - label_gtc
+        - length
+        - valid_ratio
+  loader:
+    batch_size_per_card: 32
+    drop_last: true
+    num_workers: 4
+    shuffle: true
+  sampler:
+    divided_factor:
+    - 8
+    - 16
+    first_bs: 32
+    fix_bs: false
+    is_training: true
+    name: MultiScaleSampler
+    scales:
+    - - 320
+      - 48
+profiler_options: null

@@ -1,0 +1,1 @@
+../input/data1111/final_data1/img_39254.jpg	0,50 0,50,25/00.00 5,5s

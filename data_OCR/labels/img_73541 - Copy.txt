@@ -1,0 +1,1 @@
+../input/data1111/final_data1/img_73541.jpg	Nếu tỉ lệ (b%c)/a K0.70 thì điểm đánh giá là 0

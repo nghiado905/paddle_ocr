@@ -1,0 +1,1 @@
+../input/data1111/final_data1/img_109814.jpg	tối đa 15 phút/01 lượt giao dịch, thời gian tiếp nhận, xử lý hồ sơ tối thiểu: 30

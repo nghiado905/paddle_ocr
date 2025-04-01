@@ -1,0 +1,1 @@
+../input/data1111/final_data1/img_30410.jpg	nguy cơ thất thoát dữ liệu lớn. Khi dữ liệu bị truy cập trái phép hay bị xoá thì cũng không

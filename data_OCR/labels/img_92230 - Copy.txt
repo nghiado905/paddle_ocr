@@ -1,0 +1,1 @@
+../input/data1111/final_data1/img_92230.jpg	Là giá trị vật liệu chính, vật liệu phụ dùng trực tiếp trong quá trình nuôi

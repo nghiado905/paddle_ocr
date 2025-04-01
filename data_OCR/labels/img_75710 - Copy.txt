@@ -1,0 +1,1 @@
+../input/data1111/final_data1/img_75710.jpg	1,2,3,4,5

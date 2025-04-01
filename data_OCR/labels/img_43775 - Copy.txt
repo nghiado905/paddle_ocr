@@ -1,0 +1,1 @@
+../input/data1111/final_data1/img_43775.jpg	- Hoàn thành triển khai Hệ thống giám sát, xử lý vi phạm trật tự an toàn

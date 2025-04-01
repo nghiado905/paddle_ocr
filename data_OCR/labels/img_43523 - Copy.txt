@@ -1,0 +1,1 @@
+../input/data1111/final_data1/img_43523.jpg	% Chỉ giới đường đỏ được xác định trên cơ sở tọa độ tim đường, mặt cắt
